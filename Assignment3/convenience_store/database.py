@@ -1,5 +1,5 @@
 """
-Database module - in-memory data storage (Singleton pattern)
+Database module - simple in-memory data storage (Singleton pattern)
 """
 
 from typing import Dict, List, Optional
@@ -7,6 +7,7 @@ from product import Product
 from user import User, Customer, Admin
 
 class Database:
+    """Singleton class for data storage (in-memory for simplicity)"""
     
     _instance = None
     
