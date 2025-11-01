@@ -336,7 +336,7 @@ async def update_order_status(session_id: str, order_id: int, status: str):
 if __name__ == "__main__":
     import uvicorn
     print("=" * 60)
-    print("🏪 CONVENIENCE STORE - Assignment 3")
+    print(" CONVENIENCE STORE - Assignment 3")
     print("=" * 60)
     print("Starting server...")
     print("Once started, open your browser to: http://localhost:8000")
