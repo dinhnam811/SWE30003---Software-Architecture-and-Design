@@ -90,7 +90,7 @@ async def logout(session_id: str):
     return {"message": "Logout successful"}
 
 
-# ============= PRODUCT ENDPOINTS =============
+# PRODUCT ENDPOINTS 
 
 @app.get("/api/products")
 async def get_products():
@@ -108,7 +108,7 @@ async def get_product(product_id: int):
     return product.get_details()
 
 
-# ============= CART ENDPOINTS =============
+# CART ENDPOINTS 
 
 @app.get("/api/cart")
 async def get_cart(session_id: str):
@@ -185,7 +185,7 @@ async def remove_from_cart(session_id: str, product_id: int):
         raise HTTPException(status_code=404, detail="Item not found in cart")
 
 
-# ============= ORDER ENDPOINTS =============
+# ORDER ENDPOINTS 
 
 @app.post("/api/checkout")
 async def checkout(
@@ -276,7 +276,7 @@ async def get_order(session_id: str, order_id: int):
     return order.get_details()
 
 
-# ============= ADMIN ENDPOINTS =============
+# ADMIN ENDPOINTS 
 
 @app.put("/api/admin/products/{product_id}")
 async def update_product(

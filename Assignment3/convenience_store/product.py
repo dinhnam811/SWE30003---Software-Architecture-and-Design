@@ -4,7 +4,6 @@ Simplified from Assignment 2: removed complex variant handling, merged with Inve
 """
 
 class Product:
-    """Represents a product available for sale"""
     
     def __init__(self, product_id: int, sku: str, name: str, price: float, 
                  description: str = "", stock: int = 0):
@@ -27,7 +26,7 @@ class Product:
             self.stock = 0
     
     def get_details(self) -> dict:
-        """Return product details as dictionary"""
+        #Return product details as dictionary
         return {
             "product_id": self.product_id,
             "sku": self.sku,
