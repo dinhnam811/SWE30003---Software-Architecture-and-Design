@@ -40,7 +40,7 @@ function showMainApp() {
 
 function hideAll() {
     const sections = ['login-section', 'products-section', 'cart-section', 
-                     'checkout-section', 'orders-section', 'admin-section'];
+                    'checkout-section', 'orders-section', 'admin-section'];
     sections.forEach(id => {
         document.getElementById(id).classList.add('hidden');
     });

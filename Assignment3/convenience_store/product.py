@@ -7,7 +7,7 @@ class Product:
     """Represents a product available for sale"""
     
     def __init__(self, product_id: int, sku: str, name: str, price: float, 
-                 description: str = "", stock: int = 0):
+        description: str = "", stock: int = 0):
         self.product_id = product_id
         self.sku = sku
         self.name = name
