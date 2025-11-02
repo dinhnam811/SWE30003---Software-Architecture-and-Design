@@ -508,8 +508,8 @@ h2 {
     color: #666;
 }
 
-/* Image Styles */
-/* Product Images */
+/*image styles*/
+/*product images*/
 .product-image {
     width: 100%;
     height: 200px;
@@ -527,7 +527,7 @@ h2 {
     padding: 10px 0;
 }
 
-/* Cart item images */
+/*cart item images*/
 .cart-item-image {
     width: 80px;
     height: 80px;
@@ -541,7 +541,7 @@ h2 {
     align-items: center;
 }
 
-/* Order item images */
+/*order item images */
 .order-item-image {
     width: 50px;
     height: 50px;
@@ -555,7 +555,7 @@ h2 {
     align-items: center;
 }
 
-/* Placeholder Image */
+/*placeholder image*/
 .product-image:before {
     content: "No Image";
     display: block;
@@ -568,7 +568,7 @@ h2 {
     font-weight: bold;
 }
 
-/* ===== FIXED PRODUCT LAYOUT WITH IMAGES ===== */
+/*FIXED PRODUCT LAYOUT WITH IMAGES*/
 .products-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -589,7 +589,7 @@ h2 {
     text-align: left;
 }
 
-/* Product Images Container */
+/*product images container*/
 .product-image-container {
     width: 100%;
     height: 200px;
@@ -662,7 +662,7 @@ h2 {
     text-align: center;
 }
 
-/* Fallback for broken images */
+/*fallback for broken images*/
 .product-image-container.no-image {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     display: flex;
@@ -678,7 +678,6 @@ h2 {
     font-size: 1em;
 }
 
-/* Enhanced Cart Items */
 .cart-item {
     display: flex;
     align-items: center;
@@ -706,4 +705,44 @@ h2 {
     display: flex;
     gap: 10px;
     align-items: center;
+}
+
+/*ratio fixed*/
+.product-image-container {
+    width: 100%;
+    height: 200px;
+    margin-bottom: 15px;
+    overflow: hidden;
+    border-radius: 6px;
+    background: #f0f0f0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.product-image {
+    width: auto;
+    height: auto;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain; 
+    transition: transform 0.3s;
+}
+
+.product-image[src*="placeholder"] {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.product-image-container:has(img[style*="display: none"]) {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 500;
+}
+
+.product-image-container:has(img[style*="display: none"])::before {
+    content: "🛒 No Image";
+    font-size: 1em;
 }
