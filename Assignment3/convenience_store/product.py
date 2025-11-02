@@ -7,7 +7,7 @@ class Product:
     """Represents a product available for sale"""
     
     def __init__(self, product_id: int, sku: str, name: str, price: float, 
-        description: str = "", stock: int = 0):
+        description: str = "", stock: int = 0, image_url: str = ""):
         self.product_id = product_id
         self.sku = sku
         self.name = name
@@ -15,6 +15,7 @@ class Product:
         self.description = description
         self.stock = stock  # Simplified: stock directly in Product
         self.active = True
+        self.image_url = image_url
     
     def is_available(self) -> bool:
         """Check if product is available for purchase"""
@@ -36,7 +37,8 @@ class Product:
             "description": self.description,
             "stock": self.stock,
             "active": self.active,
-            "available": self.is_available()
+            "available": self.is_available(),
+            "image_url": self.image_url
         }
     
     def __str__(self):
