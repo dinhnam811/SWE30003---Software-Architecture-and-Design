@@ -108,3 +108,10 @@ class Database:
     def get_payment(self, payment_id: int):
         """Get payment by ID"""
         return self.payments.get(payment_id)
+    
+    def get_payment_by_order(self, order_id: int):
+        """Get payment for a specific order"""
+        for payment in self.payments.values():
+            if payment.order_id == order_id:
+                return payment
+        return None
