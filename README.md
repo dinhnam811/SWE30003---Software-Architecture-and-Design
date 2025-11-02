@@ -78,7 +78,7 @@ The application follows a modular architecture with the following components:
    http://localhost:8000
    ```
 
-## 👤 Demo Accounts
+## Demo Accounts
 
 ### Customer Account
 - **Email**: `customer@example.com`
@@ -138,7 +138,7 @@ The application follows a modular architecture with the following components:
 - `PUT /api/admin/products/{product_id}` - Update product
 - `PUT /api/admin/orders/{order_id}/status` - Update order status
 
-## 📐 Design Patterns
+## Design Patterns
 
 ### Singleton Pattern
 - **`Database`** class ensures single instance for data storage
