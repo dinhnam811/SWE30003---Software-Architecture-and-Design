@@ -158,10 +158,12 @@ async function loadCart() {
         } else {
             cartItems.innerHTML = data.items.map(item => `
                 <div class="cart-item">
-                    <img src="${item.image_url || '/static/images/placeholder.jpg'}" 
-                        alt="${item.product_name}" 
-                        class="cart-item-image"
-                        onerror="this.src='/static/images/placeholder.jpg'">
+                    <div class="cart-item-image-container">
+                        <img src="${item.image_url || '/static/images/placeholder.jpg'}" 
+                                alt="${item.product_name}" 
+                                class="cart-item-image"
+                                onerror="this.style.display='none'; this.parentElement.classList.add('no-image')">
+                    </div>
                     <div class="cart-item-info">
                         <h4>${item.product_name}</h4>
                         <p>Price: $${item.unit_price.toFixed(2)}</p>
@@ -169,7 +171,7 @@ async function loadCart() {
                     </div>
                     <div class="cart-item-actions">
                         <input type="number" value="${item.quantity}" min="1" 
-                        onchange="updateCartItem(${item.product_id}, this.value)">
+                            onchange="updateCartItem(${item.product_id}, this.value)">
                         <button onclick="removeFromCart(${item.product_id})" class="btn btn-danger">Remove</button>
                     </div>
                 </div>
