@@ -27,7 +27,8 @@ class OrderItem:
             "sku": self.product.sku,
             "quantity": self.quantity,
             "unit_price": self.unit_price,
-            "line_total": self.get_line_total()
+            "line_total": self.get_line_total(),
+            "image_url": self.product.image_url
         }
     
     def __str__(self):
