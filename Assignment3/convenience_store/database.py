@@ -39,6 +39,7 @@ class Database:
             Product(3, "CANDY001", "Chocolate Bar", 1.49, "Delicious chocolate", 75),
             Product(4, "SNACK002", "Red Bean Buns", 3.49, "Sweet n Tasty Red Bean Buns", 30),
             Product(5, "DRINK002", "Goddess Water", 0.99, "Bottled water", 200),
+            Product(6, "DRINK003", "Sam Dua", 5.19, "Vietnamese tea", 150),
         ]
         for product in products:
             self.products[product.product_id] = product
