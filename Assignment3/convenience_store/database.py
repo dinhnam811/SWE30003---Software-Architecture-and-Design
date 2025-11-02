@@ -34,7 +34,7 @@ class Database:
         """Add sample data for testing"""
         # Add sample products
         products = [
-            Product(1, "SNACK001", "Spicy ahh Chips", 2.99, "Crispy hot potato chips", 50),
+            Product(1, "SNACK001", "Deadly Spicy Chips", 2.99, "Crispy hot potato chips", 50),
             Product(2, "DRINK001", "Nitro Fuel", 1.99, "Refreshing Nitro Fuel", 100),
             Product(3, "CANDY001", "Chocolate Bar", 1.49, "Delicious chocolate", 75),
             Product(4, "SNACK002", "Red Bean Buns", 3.49, "Sweet n Tasty Red Bean Buns", 30),
