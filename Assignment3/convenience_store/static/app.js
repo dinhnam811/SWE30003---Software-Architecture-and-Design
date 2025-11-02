@@ -257,9 +257,15 @@ async function handleCheckout(e) {
         
         if (response.ok) {
             const data = await response.json();
-            showMessage('Order placed successfully!', 'success');
-            document.getElementById('checkout-form').reset();
-            setTimeout(() => showOrders(), 1500);
+            
+            // Display receipt if available
+            if (data.payment && data.payment.receipt) {
+                displayReceipt(data.payment.receipt, data.order);
+            } else {
+                showMessage('Order placed successfully!', 'success');
+                document.getElementById('checkout-form').reset();
+                setTimeout(() => showOrders(), 1500);
+            }
         } else {
             const error = await response.json();
             showMessage(error.detail || 'Checkout failed', 'error');
@@ -267,6 +273,112 @@ async function handleCheckout(e) {
     } catch (error) {
         showMessage('Checkout failed', 'error');
     }
+}
+
+function displayReceipt(receipt, order) {
+    const receiptContent = document.getElementById('receipt-content');
+    const modal = document.getElementById('receipt-modal');
+    
+    if (!modal) {
+        // Fallback if modal doesn't exist
+        const receiptHtml = `
+            <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); 
+                        display: flex; align-items: center; justify-content: center; z-index: 2000;" 
+                 onclick="this.remove(); showOrders();">
+                <div style="background: white; padding: 40px; border-radius: 10px; max-width: 500px; 
+                            box-shadow: 0 10px 40px rgba(0,0,0,0.3);" 
+                     onclick="event.stopPropagation();">
+                    <div style="text-align: center; border-bottom: 2px dashed #ccc; padding-bottom: 20px; margin-bottom: 20px;">
+                        <h2 style="color: #28a745; margin: 0;">✅ Payment Successful!</h2>
+                    </div>
+                    
+                    <div style="font-family: 'Courier New', monospace; background: #f9f9f9; padding: 20px; border-radius: 5px;">
+                        <div style="text-align: center; margin-bottom: 15px;">
+                            <strong style="font-size: 18px;">PAYMENT RECEIPT</strong>
+                        </div>
+                        <div style="border-bottom: 1px solid #ddd; margin-bottom: 10px;"></div>
+                        
+                        <p style="margin: 5px 0;"><strong>Receipt No:</strong> ${receipt.receipt_number}</p>
+                        <p style="margin: 5px 0;"><strong>Order ID:</strong> #${receipt.order_id}</p>
+                        <p style="margin: 5px 0;"><strong>Date:</strong> ${receipt.payment_date}</p>
+                        
+                        <div style="border-bottom: 1px solid #ddd; margin: 10px 0;"></div>
+                        
+                        <p style="margin: 5px 0;"><strong>Customer:</strong> ${receipt.customer_name}</p>
+                        <p style="margin: 5px 0;"><strong>Payment Method:</strong> ${receipt.payment_method}</p>
+                        
+                        <div style="border-bottom: 1px solid #ddd; margin: 10px 0;"></div>
+                        
+                        <p style="margin: 10px 0; font-size: 20px; text-align: center;">
+                            <strong>Amount Paid: $${receipt.amount_paid.toFixed(2)}</strong>
+                        </p>
+                        
+                        <div style="border-bottom: 1px solid #ddd; margin: 10px 0;"></div>
+                        
+                        <p style="margin: 5px 0; text-align: center; color: #28a745;">
+                            <strong>Status: ${receipt.status}</strong>
+                        </p>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 20px;">
+                        <button onclick="this.parentElement.parentElement.parentElement.remove(); showOrders();" 
+                                class="btn btn-primary" style="margin-right: 10px;">View Orders</button>
+                        <button onclick="this.parentElement.parentElement.parentElement.remove(); showProducts();" 
+                                class="btn btn-secondary">Continue Shopping</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        document.body.insertAdjacentHTML('beforeend', receiptHtml);
+        return;
+    }
+    
+    // Use modal if it exists
+    receiptContent.innerHTML = `
+        <div class="receipt">
+            <h2> PAYMENT RECEIPT</h2>
+            <div class="receipt-row">
+                <span>Receipt Number:</span>
+                <strong>${receipt.receipt_number}</strong>
+            </div>
+            <div class="receipt-row">
+                <span>Order ID:</span>
+                <strong>#${receipt.order_id}</strong>
+            </div>
+            <div class="receipt-row">
+                <span>Payment Date:</span>
+                <span>${receipt.payment_date}</span>
+            </div>
+            <div class="receipt-row">
+                <span>Customer:</span>
+                <span>${receipt.customer_name}</span>
+            </div>
+            <div class="receipt-row">
+                <span>Payment Method:</span>
+                <span>${receipt.payment_method}</span>
+            </div>
+            <div class="receipt-total">
+                <div class="receipt-row">
+                    <span>Amount Paid:</span>
+                    <strong>$${receipt.amount_paid.toFixed(2)}</strong>
+                </div>
+            </div>
+            <div class="receipt-row">
+                <span>Status:</span>
+                <strong style="color: #28a745;">${receipt.status}</strong>
+            </div>
+            <div class="receipt-footer">
+                Thank you for your purchase! 
+            </div>
+        </div>
+        <div style="text-align: center; margin-top: 20px;">
+            <button onclick="closeReceiptModal(); showOrders();" class="btn btn-primary">View My Orders</button>
+            <button onclick="closeReceiptModal(); showProducts();" class="btn btn-secondary">Continue Shopping</button>
+        </div>
+    `;
+    
+    modal.classList.remove('hidden');
+    modal.classList.add('show');
 }
 
 // Orders
@@ -311,11 +423,37 @@ async function loadOrders() {
                             </div>
                         `).join('')}
                     </div>
+                    <div style="margin-top: 15px;">
+                        <button onclick="viewReceipt(${order.order_id})" class="btn btn-primary">View Receipt</button>
+                    </div>
                 </div>
             `).join('');
         }
     } catch (error) {
         showMessage('Failed to load orders', 'error');
+    }
+}
+
+async function viewReceipt(orderId) {
+    try {
+        const response = await fetch(`${API_BASE}/api/orders/${orderId}/receipt?session_id=${sessionId}`);
+        
+        if (response.ok) {
+            const receipt = await response.json();
+            displayReceipt(receipt);
+        } else {
+            showMessage('Receipt not available', 'error');
+        }
+    } catch (error) {
+        showMessage('Failed to load receipt', 'error');
+    }
+}
+
+function closeReceiptModal() {
+    const modal = document.getElementById('receipt-modal');
+    if (modal) {
+        modal.classList.remove('show');
+        modal.classList.add('hidden');
     }
 }
 
