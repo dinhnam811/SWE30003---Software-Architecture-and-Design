@@ -9,7 +9,7 @@ class User:
     def __init__(self, user_id: int, email: str, password: str, role: str):
         self.user_id = user_id
         self.email = email
-        self.password = password  # In production: use hashed passwords!
+        self.password = password  
         self.role = role  # "customer" or "admin"
     
     def authenticate(self, password: str) -> bool:
