@@ -34,12 +34,12 @@ class Database:
         """Add sample data for testing"""
         # Add sample products
         products = [
-            Product(1, "SNACK001", "Spicy ahh Chips", 2.99, "Crispy hot potato chips", 50, "/images/chips.jpg"),
-            Product(2, "DRINK001", "Nitro Fuel", 1.99, "Refreshing Nitro Fuel", 100, "/images/fuel.jpg"),
-            Product(3, "CANDY001", "Chocolate Bar", 1.49, "Delicious chocolate", 75, "/images/bar.jpg"),
-            Product(4, "SNACK002", "Red Bean Buns", 3.49, "Sweet n Tasty Red Bean Buns", 30, "/images/buns.jpg"),
-            Product(5, "DRINK002", "Goddess Water", 0.99, "Bottled water", 200, "/images/water.jpg"),
-            Product(6, "DRINK003", "Sam Dua", 5.19, "Vietnamese tea", 150, "/images/samdua.jpg"),
+            Product(1, "SNACK001", "Spicy ahh Chips", 2.99, "Crispy hot potato chips", 50),
+            Product(2, "DRINK001", "Nitro Fuel", 1.99, "Refreshing Nitro Fuel", 100),
+            Product(3, "CANDY001", "Chocolate Bar", 1.49, "Delicious chocolate", 75),
+            Product(4, "SNACK002", "Red Bean Buns", 3.49, "Sweet n Tasty Red Bean Buns", 30),
+            Product(5, "DRINK002", "Goddess Water", 0.99, "Bottled water", 200),
+            Product(6, "DRINK003", "Sam Dua", 5.19, "Vietnamese tea", 150),
         ]
         for product in products:
             self.products[product.product_id] = product

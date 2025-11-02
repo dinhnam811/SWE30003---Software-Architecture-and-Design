@@ -2,7 +2,7 @@
 
 A simple web-based convenience store application built with FastAPI and vanilla JavaScript, demonstrating object-oriented programming principles and design patterns.
 
-## 📋 Project Overview
+## Project Overview
 
 This is a full-stack e-commerce application for a convenience store that supports customer shopping and admin management functionalities. The project showcases:
 
@@ -11,7 +11,7 @@ This is a full-stack e-commerce application for a convenience store that support
 - **Design Patterns**: Singleton, Strategy Pattern, Composition
 - **OOP Principles**: Inheritance, Encapsulation, Abstraction
 
-## 🏗️ Architecture
+## Architecture
 
 ### Backend Structure
 
@@ -32,7 +32,7 @@ The application follows a modular architecture with the following components:
 - **`static/app.js`** - JavaScript client application
 - **`static/style.css`** - Styling and responsive design
 
-## 🚀 Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -78,7 +78,7 @@ The application follows a modular architecture with the following components:
    http://localhost:8000
    ```
 
-## 👤 Demo Accounts
+## Demo Accounts
 
 ### Customer Account
 - **Email**: `customer@example.com`
@@ -90,30 +90,30 @@ The application follows a modular architecture with the following components:
 - **Password**: `admin123`
 - **Access**: Manage products, view all orders, update order status
 
-## ✨ Features
+## Features
 
 ### Customer Features
-- ✅ User authentication (login/logout)
-- ✅ Browse available products
-- ✅ Add products to shopping cart
-- ✅ Update cart quantities
-- ✅ Remove items from cart
-- ✅ Checkout with multiple payment methods
-- ✅ View order history
-- ✅ Real-time cart counter
+- User authentication (login/logout)
+- Browse available products
+- Add products to shopping cart
+- Update cart quantities
+- Remove items from cart
+- Checkout with multiple payment methods
+- View order history
+- Real-time cart counter
 
 ### Admin Features
-- ✅ Update product details (name, price, description, stock)
-- ✅ View all customer orders
-- ✅ Update order status (Placed → Processing → Shipped → Delivered)
-- ✅ Inventory management
+- Update product details (name, price, description, stock)
+- View all customer orders
+- Update order status (Placed → Processing → Shipped → Delivered)
+- Inventory management
 
 ### Payment Methods
-- 💳 Digital Wallet
-- 🏦 Bank Debit
-- 💰 PayPal
+- Digital Wallet
+- Bank Debit
+- PayPal
 
-## 🔧 API Endpoints
+## API Endpoints
 
 ### Authentication
 - `POST /api/login` - User login
@@ -138,7 +138,7 @@ The application follows a modular architecture with the following components:
 - `PUT /api/admin/products/{product_id}` - Update product
 - `PUT /api/admin/orders/{order_id}/status` - Update order status
 
-## 📐 Design Patterns
+## Design Patterns
 
 ### Singleton Pattern
 - **`Database`** class ensures single instance for data storage
@@ -156,14 +156,14 @@ The application follows a modular architecture with the following components:
 ### Inheritance
 - `User` → `Customer`, `Admin`
 
-## 📦 Dependencies
+## Dependencies
 
 See `requirements.txt`:
 - `fastapi==0.104.1` - Web framework
 - `uvicorn==0.24.0` - ASGI server
 - `python-multipart==0.0.6` - Form data handling
 
-## 🗂️ Project Structure
+## Project Structure
 
 ```
 Assignment3/
@@ -184,7 +184,7 @@ Assignment3/
 └── README.md               # This file
 ```
 
-## 🔍 Sample Products
+## Sample Products
 
 The database is pre-populated with sample products:
 1. Potato Chips - $2.99 (50 in stock)
@@ -193,14 +193,14 @@ The database is pre-populated with sample products:
 4. Cookies - $3.49 (30 in stock)
 5. Bottled Water - $0.99 (200 in stock)
 
-## ⚠️ Important Notes
+## Important Notes
 
 - This is a **demonstration project** with in-memory storage
 - Data is **not persisted** - restarting the server resets all data
 - Passwords are stored in **plain text** (not suitable for production)
 - Session management is **simplified** (use proper authentication in production)
 
-## 📝 License
+## License
 
 This project is for educational purposes as part of SWE30003 Assignment 3.
 
