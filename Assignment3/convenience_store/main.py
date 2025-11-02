@@ -15,7 +15,7 @@ from user import User, Customer, Admin
 from shopping_cart import ShoppingCart
 from order import Order
 from order_item import OrderItem
-from payment import Payment, DigitalWallet, BankDebit, PayPal
+from payment import Payment, DigitalWallet, BankDebit, PayPal, Invoice, Receipt
 from database import Database
 
 # Create FastAPI app
@@ -108,7 +108,7 @@ async def get_product(product_id: int):
     return product.get_details()
 
 
-# ============= CART ENDPOINTS =============
+# CART ENDPOINTS 
 
 @app.get("/api/cart")
 async def get_cart(session_id: str):
@@ -227,6 +227,13 @@ async def checkout(
     payment = Payment(order.order_id, order.total, pay_method)
     
     if payment.process():
+        # Get customer info for receipt
+        user = db.get_user(user_id)
+        customer_name = user.name if hasattr(user, 'name') else user.email
+        
+        # Generate receipt after successful payment
+        receipt = payment.generate_receipt(customer_name)
+        
         db.add_payment(payment)
         cart.clear()  # Clear cart after successful checkout
         return {
@@ -274,6 +281,33 @@ async def get_order(session_id: str, order_id: int):
         raise HTTPException(status_code=403, detail="Unauthorized")
     
     return order.get_details()
+
+
+@app.get("/api/orders/{order_id}/receipt")
+async def get_order_receipt(session_id: str, order_id: int):
+    """Get receipt for an order"""
+    user_id = sessions.get(session_id)
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    order = db.get_order(order_id)
+    if not order:
+        raise HTTPException(status_code=404, detail="Order not found")
+    
+    user = db.get_user(user_id)
+    # Check authorization
+    if user.role == "customer" and order.customer_id != user_id:
+        raise HTTPException(status_code=403, detail="Unauthorized")
+    
+    # Get payment for this order
+    payment = db.get_payment_by_order(order_id)
+    if not payment:
+        raise HTTPException(status_code=404, detail="Payment not found")
+    
+    if not payment.receipt:
+        raise HTTPException(status_code=404, detail="Receipt not generated")
+    
+    return payment.receipt.generate_receipt()
 
 
 # ADMIN ENDPOINTS 
