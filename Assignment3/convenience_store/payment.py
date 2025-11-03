@@ -105,7 +105,7 @@ class Receipt:
     _receipt_counter = 2000  # Start from 2000 for receipt numbers
     
     def __init__(self, payment_id: int, order_id: int, customer_name: str, 
-                 amount: float, payment_method: str):
+                amount: float, payment_method: str):
         self.receipt_number = Receipt._receipt_counter
         Receipt._receipt_counter += 1
         
@@ -133,7 +133,7 @@ class Receipt:
         """Generate a formatted receipt string (placeholder)"""
         return f"""
         =====================================
-                 PAYMENT RECEIPT
+                PAYMENT RECEIPT
         =====================================
         Receipt No: RCP-{self.receipt_number}
         Date: {self.issue_date.strftime("%Y-%m-%d %H:%M:%S")}

@@ -29,7 +29,7 @@ class Customer(User):
     """Customer user with shopping capabilities"""
     
     def __init__(self, user_id: int, email: str, password: str, 
-                 name: str = "", address: str = ""):
+                name: str = "", address: str = ""):
         super().__init__(user_id, email, password, "customer")
         self.name = name
         self.address = address

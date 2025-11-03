@@ -2,10 +2,13 @@
 OrderItem module - represents individual items in an order or cart
 """
 
+from Assignment3.convenience_store.product import Product
+
+
 class OrderItem:
     """Represents a product with quantity in cart or order"""
     
-    def __init__(self, product, quantity: int):
+    def __init__(self, product: Product, quantity: int):
         self.product = product
         self.quantity = quantity
         self.unit_price = product.price  # Capture price at time of adding
