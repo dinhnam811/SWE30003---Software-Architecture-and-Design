@@ -41,14 +41,13 @@ The application follows a modular architecture with the following components:
 
 ### Installation
 
-1. **Clone or download the project**
-
-2. **Navigate to the project directory**
+1. **Clone the project and navigate to the project directory**
    ```bash
-   cd Assignment3
+   git clone https://github.com/dinhnam811/SWE30003---Software-Architecture-and-Design
+   cd SWE30003---Software-Architecture-and-Design/Assignment3
    ```
 
-3. **Create a virtual environment (recommended)**
+2. **Create a virtual environment (recommended)**
    ```bash
    python -m venv venv
    source venv/bin/activate  # On Mac/Linux
@@ -56,7 +55,7 @@ The application follows a modular architecture with the following components:
    venv\Scripts\activate  # On Windows
    ```
 
-4. **Install dependencies**
+3. **Install dependencies**
    ```bash
    pip install -r requirements.txt
    ```
