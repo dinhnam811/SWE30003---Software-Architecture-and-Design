@@ -42,6 +42,9 @@ The application follows a modular architecture with the following components:
 ### Installation
 
 1. **Clone or download the project**
+   ```bash
+   git clone https://github.com/dinhnam811/SWE30003---Software-Architecture-and-Design
+   ```
 
 2. **Navigate to the project directory**
    ```bash
