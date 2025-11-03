@@ -108,14 +108,28 @@ async function loadProducts() {
         const grid = document.getElementById('products-grid');
         grid.innerHTML = products.map(product => `
             <div class="product-card">
-                <h3>${product.name}</h3>
-                <p class="description">${product.description}</p>
-                <p class="price">$${product.price.toFixed(2)}</p>
-                <p class="stock">Stock: ${product.stock}</p>
-                ${product.available ? `
-                    <input type="number" id="qty-${product.product_id}" value="1" min="1" max="${product.stock}">
-                    <button onclick="addToCart(${product.product_id})" class="btn btn-primary">Add to Cart</button>
-                ` : '<p style="color: red;">Out of Stock</p>'}
+                <div class="product-image-container">
+                    <img src="${product.image_url || '/static/images/placeholder.jpg'}" 
+                        alt="${product.name}" 
+                        class="product-image"
+                        onerror="this.style.display='none'; this.parentElement.classList.add('no-image')">
+                </div>
+                <div class="product-info">
+                    <h3>${product.name}</h3>
+                    <p class="description">${product.description}</p>
+                    <p class="price">$${product.price.toFixed(2)}</p>
+                    <p class="stock">Stock: ${product.stock}</p>
+                    <div class="product-actions">
+                    ${product.available ? `
+                        <input type="number" 
+                            id="qty-${product.product_id}" 
+                            value="1" 
+                            min="1" 
+                            max="${product.stock}">
+                        <button onclick="addToCart(${product.product_id})" class="btn btn-primary">Add to Cart</button>
+                    ` : '<p style="color: red; margin: 0; font-size: 0.9em;">Out of Stock</p>'}
+                    </div>
+                </div>
             </div>
         `).join('');
     } catch (error) {
@@ -144,6 +158,12 @@ async function loadCart() {
         } else {
             cartItems.innerHTML = data.items.map(item => `
                 <div class="cart-item">
+                    <div class="cart-item-image-container">
+                        <img src="${item.image_url || '/static/images/placeholder.jpg'}" 
+                                alt="${item.product_name}" 
+                                class="cart-item-image"
+                                onerror="this.style.display='none'; this.parentElement.classList.add('no-image')">
+                    </div>
                     <div class="cart-item-info">
                         <h4>${item.product_name}</h4>
                         <p>Price: $${item.unit_price.toFixed(2)}</p>
@@ -151,7 +171,7 @@ async function loadCart() {
                     </div>
                     <div class="cart-item-actions">
                         <input type="number" value="${item.quantity}" min="1" 
-                               onchange="updateCartItem(${item.product_id}, this.value)">
+                            onchange="updateCartItem(${item.product_id}, this.value)">
                         <button onclick="removeFromCart(${item.product_id})" class="btn btn-danger">Remove</button>
                     </div>
                 </div>
