@@ -15,7 +15,9 @@ from user import User, Customer, Admin
 from shopping_cart import ShoppingCart
 from order import Order
 from order_item import OrderItem
-from payment import Payment, DigitalWallet, BankDebit, PayPal, Invoice, Receipt
+from payment import Payment, DigitalWallet, BankDebit, PayPal
+from invoice import Invoice
+from receipt import Receipt
 from database import Database
 
 # Create FastAPI app
@@ -223,6 +225,19 @@ async def checkout(
     # Save order
     db.add_order(order)
     
+    # Get customer info for invoice and receipt
+    user = db.get_user(user_id)
+    customer_name = user.name if hasattr(user, 'name') else user.email
+    
+    # Create invoice for the order (before payment)
+    invoice = Invoice(
+        order_id=order.order_id,
+        customer_name=customer_name,
+        items=[item.get_details() for item in order.items],
+        total_amount=order.total
+    )
+    db.add_invoice(invoice)
+    
     # Create payment
     if payment_method == "wallet":
         pay_method = DigitalWallet(payment_details)
@@ -236,12 +251,11 @@ async def checkout(
     payment = Payment(order.order_id, order.total, pay_method)
     
     if payment.process():
-        # Get customer info for receipt
-        user = db.get_user(user_id)
-        customer_name = user.name if hasattr(user, 'name') else user.email
+        # Mark invoice as paid
+        invoice.mark_as_paid()
         
-        # Generate receipt after successful payment
-        receipt = payment.generate_receipt(customer_name)
+        # Generate receipt after successful payment with items list
+        receipt = payment.generate_receipt(customer_name, items=[item.get_details() for item in order.items])
         
         db.add_payment(payment)
         cart.clear()  # Clear cart after successful checkout
@@ -317,6 +331,23 @@ async def get_order_receipt(session_id: str, order_id: int):
         raise HTTPException(status_code=404, detail="Receipt not generated")
     
     return payment.receipt.generate_receipt()
+
+
+@app.get("/api/orders/{order_id}/invoice")
+async def get_order_invoice(session_id: str, order_id: int):
+    """Get invoice for an order"""
+    user_id = sessions.get(session_id)
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    user = db.get_user(user_id)
+    
+    # Get invoice for this order
+    invoice = db.get_invoice_by_order(order_id)
+    if not invoice:
+        raise HTTPException(status_code=404, detail="Invoice not found")
+    
+    return invoice.generate_invoice()
 
 
 # ADMIN ENDPOINTS 

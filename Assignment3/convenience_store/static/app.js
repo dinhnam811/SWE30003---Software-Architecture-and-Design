@@ -323,7 +323,7 @@ function displayReceipt(receipt, order) {
                             box-shadow: 0 10px 40px rgba(0,0,0,0.3);" 
                      onclick="event.stopPropagation();">
                     <div style="text-align: center; border-bottom: 2px dashed #ccc; padding-bottom: 20px; margin-bottom: 20px;">
-                        <h2 style="color: #28a745; margin: 0;">✅ Payment Successful!</h2>
+                        <h2 style="color: #28a745; margin: 0;"> Payment Successful!</h2>
                     </div>
                     
                     <div style="font-family: 'Courier New', monospace; background: #f9f9f9; padding: 20px; border-radius: 5px;">
@@ -391,6 +391,15 @@ function displayReceipt(receipt, order) {
                 <span>Payment Method:</span>
                 <span>${receipt.payment_method}</span>
             </div>
+            <div class="receipt-row" style="margin-top: 15px; padding-top: 15px; border-top: 2px solid #333;">
+                <strong>Items Purchased:</strong>
+            </div>
+            ${receipt.items && receipt.items.length > 0 ? receipt.items.map(item => `
+                <div class="receipt-row" style="padding-left: 20px;">
+                    <span>${item.product_name} x${item.quantity} @ $${item.unit_price.toFixed(2)}</span>
+                    <span>$${item.line_total.toFixed(2)}</span>
+                </div>
+            `).join('') : '<p style="padding-left: 20px;">No items</p>'}
             <div class="receipt-total">
                 <div class="receipt-row">
                     <span>Amount Paid:</span>
@@ -408,6 +417,66 @@ function displayReceipt(receipt, order) {
         <div style="text-align: center; margin-top: 20px;">
             <button onclick="closeReceiptModal(); showOrders();" class="btn btn-primary">View My Orders</button>
             <button onclick="closeReceiptModal(); showProducts();" class="btn btn-secondary">Continue Shopping</button>
+        </div>
+    `;
+    
+    modal.classList.remove('hidden');
+    modal.classList.add('show');
+}
+
+function displayInvoice(invoice) {
+    const receiptContent = document.getElementById('receipt-content');
+    const modal = document.getElementById('receipt-modal');
+    
+    // Use modal to display invoice (reusing receipt modal)
+    receiptContent.innerHTML = `
+        <div class="receipt">
+            <h2> INVOICE</h2>
+            <div class="receipt-row">
+                <span>Invoice Number:</span>
+                <strong>${invoice.invoice_number}</strong>
+            </div>
+            <div class="receipt-row">
+                <span>Order ID:</span>
+                <strong>#${invoice.order_id}</strong>
+            </div>
+            <div class="receipt-row">
+                <span>Issue Date:</span>
+                <span>${invoice.issue_date}</span>
+            </div>
+            <div class="receipt-row">
+                <span>Due Date:</span>
+                <span>${invoice.due_date}</span>
+            </div>
+            <div class="receipt-row">
+                <span>Customer:</span>
+                <span>${invoice.customer_name}</span>
+            </div>
+            <div class="receipt-row" style="margin-top: 15px; padding-top: 15px; border-top: 2px solid #333;">
+                <strong>Items:</strong>
+            </div>
+            ${invoice.items.map(item => `
+                <div class="receipt-row" style="padding-left: 20px;">
+                    <span>${item.product_name} x${item.quantity} @ $${item.unit_price.toFixed(2)}</span>
+                    <span>$${item.line_total.toFixed(2)}</span>
+                </div>
+            `).join('')}
+            <div class="receipt-total">
+                <div class="receipt-row">
+                    <span>Total Amount:</span>
+                    <strong>$${invoice.total_amount.toFixed(2)}</strong>
+                </div>
+            </div>
+            <div class="receipt-row">
+                <span>Status:</span>
+                <strong style="color: ${invoice.status === 'Paid' ? '#28a745' : '#ff9800'};">${invoice.status}</strong>
+            </div>
+            <div class="receipt-footer">
+                Admin Invoice View
+            </div>
+        </div>
+        <div style="text-align: center; margin-top: 20px;">
+            <button onclick="closeReceiptModal();" class="btn btn-primary">Close</button>
         </div>
     `;
     
@@ -480,6 +549,21 @@ async function viewReceipt(orderId) {
         }
     } catch (error) {
         showMessage('Failed to load receipt', 'error');
+    }
+}
+
+async function viewInvoice(orderId) {
+    try {
+        const response = await fetch(`${API_BASE}/api/orders/${orderId}/invoice?session_id=${sessionId}`);
+        
+        if (response.ok) {
+            const invoice = await response.json();
+            displayInvoice(invoice);
+        } else {
+            showMessage('Invoice not available', 'error');
+        }
+    } catch (error) {
+        showMessage('Failed to load invoice', 'error');
     }
 }
 
@@ -592,6 +676,7 @@ async function showAdminOrders() {
                             </div>
                         `).join('')}
                     </div>
+                    <button onclick="viewInvoice(${order.order_id})" class="btn btn-primary">View Invoice</button>
                 </div>
             `).join('')}
         `;
