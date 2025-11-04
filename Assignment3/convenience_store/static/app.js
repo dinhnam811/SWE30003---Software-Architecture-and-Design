@@ -288,10 +288,16 @@ async function showCheckout() {
 async function handleCheckout(e) {
     e.preventDefault();
     const paymentMethod = document.getElementById('payment-method').value;
-    const paymentDetails = document.getElementById('payment-details').value;
+    // payment_details field might not exist; synthesize from card data to satisfy backend
+    const paymentDetailsEl = document.getElementById('payment-details');
     const cardNumberInput = document.getElementById('card-number');
     const expiryInput = document.getElementById('expiry-date');
     const cvcInput = document.getElementById('cvc');
+    let paymentDetails = paymentDetailsEl ? paymentDetailsEl.value : '';
+    if (!paymentDetails) {
+        const last4 = cardNumberInput && cardNumberInput.value ? cardNumberInput.value.slice(-4) : '';
+        paymentDetails = last4 ? `Card ****${last4}` : 'Card';
+    }
     const cardNumValid = cardNumberInput ? (/^\d{16}$/.test(cardNumberInput.value)) : true;
     const expiryValid = expiryInput ? (/^(0[1-9]|1[0-2])\/\d{4}$/.test(expiryInput.value)) : true;
     const cvcValid = cvcInput ? (/^\d{3}$/.test(cvcInput.value)) : true;
