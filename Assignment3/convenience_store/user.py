@@ -1,10 +1,10 @@
 """
-user module - handles authentication and user roles
-simplified from Assignment 2: basic authentication, removed Account class
+User module - handles authentication and user roles
+Simplified from Assignment 2: basic authentication, removed Account class
 """
 
 class User:
-    """base class for all system users"""
+    """Base class for all system users"""
     
     def __init__(self, user_id: int, email: str, password: str, role: str):
         self.user_id = user_id
@@ -13,11 +13,11 @@ class User:
         self.role = role  # "customer" or "admin"
     
     def authenticate(self, password: str) -> bool:
-        """authenticate user by comparing passwords"""
+        """Authenticate user by comparing passwords"""
         return self.password == password
     
     def get_info(self) -> dict:
-        """return user info without password"""
+        """Return user info without password"""
         return {
             "user_id": self.user_id,
             "email": self.email,
@@ -26,7 +26,7 @@ class User:
 
 
 class Customer(User):
-    """customer user with shopping capabilities"""
+    """Customer user with shopping capabilities"""
     
     def __init__(self, user_id: int, email: str, password: str, 
                 name: str = "", address: str = ""):
@@ -35,7 +35,7 @@ class Customer(User):
         self.address = address
     
     def get_info(self) -> dict:
-        """return customer info"""
+        """Return customer info"""
         info = super().get_info()
         info.update({
             "name": self.name,
@@ -45,15 +45,15 @@ class Customer(User):
 
 
 class Admin(User):
-    """admin user with management capabilities"""
+    """Admin user with management capabilities"""
     
     def __init__(self, user_id: int, email: str, password: str):
         super().__init__(user_id, email, password, "admin")
     
     def can_manage_inventory(self) -> bool:
-        """check if user can manage inventory"""
+        """Check if user can manage inventory"""
         return True
     
     def can_view_orders(self) -> bool:
-        """check if user can view all orders"""
+        """Check if user can view all orders"""
         return True
