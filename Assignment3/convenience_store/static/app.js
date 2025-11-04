@@ -152,9 +152,14 @@ async function loadCart() {
         updateCartCount(data.item_count);
         
         const cartItems = document.getElementById('cart-items');
+        const checkoutBtn = document.getElementById('checkout-button');
         if (data.items.length === 0) {
             cartItems.innerHTML = '<p>Your cart is empty</p>';
             document.getElementById('cart-total').innerHTML = '';
+            if (checkoutBtn) {
+                checkoutBtn.title = 'Add items to proceed to checkout';
+                checkoutBtn.onclick = () => showMessage('Add items to proceed to checkout', 'error');
+            }
         } else {
             cartItems.innerHTML = data.items.map(item => `
                 <div class="cart-item">
@@ -168,6 +173,7 @@ async function loadCart() {
                         <h4>${item.product_name}</h4>
                         <p>Price: $${item.unit_price.toFixed(2)}</p>
                         <p>Subtotal: $${item.line_total.toFixed(2)}</p>
+                        ${item.stock_ok ? '' : `<p style="color: #c0392b; font-weight: bold; margin-top: 6px;">${item.stock_message}</p>`}
                     </div>
                     <div class="cart-item-actions">
                         <input type="number" value="${item.quantity}" min="1" 
@@ -178,6 +184,14 @@ async function loadCart() {
             `).join('');
             
             document.getElementById('cart-total').innerHTML = `Total: $${data.total.toFixed(2)}`;
+            // Disable checkout if any stock issues
+            if (checkoutBtn) {
+                const canCheckout = data.can_checkout !== undefined ? data.can_checkout : data.items.every(i => i.stock_ok !== false);
+                checkoutBtn.title = canCheckout ? '' : 'Resolve stock issues in your cart before checkout';
+                checkoutBtn.onclick = canCheckout 
+                    ? () => showCheckout()
+                    : () => showMessage('Some products are out of stock or exceeded stock limit', 'error');
+            }
         }
     } catch (error) {
         showMessage('Failed to load cart', 'error');

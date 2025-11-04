@@ -125,7 +125,9 @@ async def get_cart(session_id: str):
     return {
         "items": cart.get_items(),
         "total": cart.get_total(),
-        "item_count": cart.get_item_count()
+        "item_count": cart.get_item_count(),
+        # can_checkout is true only if every item has stock_ok
+        "can_checkout": all((item.get("stock_ok", True) for item in cart.get_items()))
     }
 
 
@@ -203,6 +205,13 @@ async def checkout(
         raise HTTPException(status_code=400, detail="Cart is empty")
     
     # Create order from cart
+    # Validate stock before creating order
+    for item in cart.items:
+        if item.product.stock <= 0:
+            raise HTTPException(status_code=400, detail=f"{item.product.name} is out of stock")
+        if item.quantity > item.product.stock:
+            raise HTTPException(status_code=400, detail=f"{item.product.name} has exceeded limited stock (Instock: {item.product.stock})")
+
     order_items = [OrderItem(item.product, item.quantity) for item in cart.items]
     order = Order(user_id, order_items)
     

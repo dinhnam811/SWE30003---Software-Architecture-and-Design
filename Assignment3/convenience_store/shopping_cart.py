@@ -64,7 +64,26 @@ class ShoppingCart:
     
     def get_items(self) -> List[dict]:
         """Return all items as dictionaries"""
-        return [item.get_details() for item in self.items]
+        detailed_items: List[dict] = []
+        for item in self.items:
+            entry = item.get_details()
+            current_stock = item.product.stock
+            entry["current_stock"] = current_stock
+            # Determine stock status and message for UI
+            if current_stock <= 0:
+                entry["stock_ok"] = False
+                entry["stock_issue"] = "out_of_stock"
+                entry["stock_message"] = f"{item.product.name} is out of stock"
+            elif item.quantity > current_stock:
+                entry["stock_ok"] = False
+                entry["stock_issue"] = "exceeds_stock"
+                entry["stock_message"] = f"{item.product.name} has exceeded limited stock (Instock: {current_stock})"
+            else:
+                entry["stock_ok"] = True
+                entry["stock_issue"] = None
+                entry["stock_message"] = ""
+            detailed_items.append(entry)
+        return detailed_items
     
     def __str__(self):
         if not self.items:
