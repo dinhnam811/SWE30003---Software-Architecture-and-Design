@@ -8,16 +8,16 @@ from datetime import datetime
 class Order:
     """Represents a confirmed order"""
     
-    _order_counter = 1  # Simple ID generation
+    _order_counter = 1  # simple ID generation
     
     def __init__(self, customer_id: int, items: List):
         self.order_id = Order._order_counter
         Order._order_counter += 1
         
         self.customer_id = customer_id
-        self.items = items  # Composition: order owns its items
+        self.items = items  # composition: order owns its items
         self.order_date = datetime.now()
-        self.status = "Placed"  # Placed -> Processing -> Shipped -> Delivered
+        self.status = "Placed"  # placed -> processing -> shipped -> delivered
         self.total = self._calculate_total()
     
     def _calculate_total(self) -> float:

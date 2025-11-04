@@ -1,4 +1,4 @@
-/* Global Styles */
+/* global styles */
 * {
     margin: 0;
     padding: 0;
@@ -21,7 +21,7 @@ body {
     padding: 30px;
 }
 
-/* Header */
+/* header */
 header {
     display: flex;
     justify-content: space-between;
@@ -47,7 +47,7 @@ header h1 {
     font-weight: 500;
 }
 
-/* Sections & Layout */
+/* sections and layout */
 .section {
     margin-bottom: 30px;
 }
@@ -62,7 +62,7 @@ h2 {
     font-size: 1.8em;
 }
 
-/* Forms */
+/* forms */
 .form-group {
     margin-bottom: 20px;
 }
@@ -90,7 +90,7 @@ h2 {
     border-color: #667eea;
 }
 
-/* Buttons */
+/* buttons */
 .btn {
     padding: 12px 24px;
     border: none;
@@ -139,7 +139,7 @@ h2 {
     background: #218838;
 }
 
-/* Products Grid */
+/* products grid */
 .products-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -251,7 +251,7 @@ h2 {
     transform: scale(1.05);
 }
 
-/* Cart & Order Items */
+/* cart and order items */
 .cart-item,
 .order-item {
     display: flex;
@@ -323,7 +323,7 @@ h2 {
     border-radius: 5px;
 }
 
-/* Orders */
+/* orders */
 .order-card {
     border: 2px solid #eee;
     border-radius: 8px;
@@ -366,7 +366,7 @@ h2 {
     margin-bottom: 10px;
 }
 
-/* Navigation */
+/* navigation */
 .nav-menu {
     display: flex;
     gap: 10px;
@@ -388,7 +388,7 @@ h2 {
     margin-left: 5px;
 }
 
-/* Admin */
+/* admin */
 .admin-tabs {
     display: flex;
     gap: 10px;
@@ -402,7 +402,7 @@ h2 {
     margin-bottom: 20px;
 }
 
-/* Messages */
+/* messages */
 .message {
     position: fixed;
     top: 20px;
@@ -439,7 +439,7 @@ h2 {
     }
 }
 
-/* Modal Styles */
+/* modal styles */
 .modal {
     display: none;
     position: fixed;
@@ -545,7 +545,7 @@ h2 {
     color: #666;
 }
 
-/* Hints */
+/* hints */
 .hint {
     background: #fff3cd;
     border: 1px solid #ffc107;
@@ -556,7 +556,7 @@ h2 {
     font-size: 0.9em;
 }
 
-/* Responsive */
+/* responsive */
 @media (max-width: 768px) {
     .container {
         padding: 20px;
@@ -593,7 +593,7 @@ h2 {
     }
 }
 
-/* ===== FIXED IMAGE RATIO ===== */
+/* fixed image ratio */
 .product-image-container {
     width: 100%;
     height: 200px;

@@ -1,10 +1,10 @@
 """
-Product module - represents sellable items in the store
-Simplified from Assignment 2: removed complex variant handling, merged with InventoryItem
+product module - represents sellable items in the store
+simplified from Assignment 2: removed complex variant handling, merged with InventoryItem
 """
 
 class Product:
-    """Represents a product available for sale"""
+    """represents a product available for sale"""
     
     def __init__(self, product_id: int, sku: str, name: str, price: float, 
         description: str = "", stock: int = 0, image_url: str = ""):
@@ -13,7 +13,7 @@ class Product:
         self.name = name
         self.price = price
         self.description = description
-        self.stock = stock  # Simplified: stock directly in Product
+        self.stock = stock  # simplified: stock directly in Product
         self.active = True
         self.image_url = image_url
     
