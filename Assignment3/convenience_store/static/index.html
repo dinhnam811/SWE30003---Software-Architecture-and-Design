@@ -9,7 +9,7 @@
 </head>
 <body>
     <div class="container">
-        <!-- Header -->
+        <!-- header -->
         <header>
             <h1>🏪 Convenience Store</h1>
             <div id="user-info" class="hidden">
@@ -18,7 +18,7 @@
             </div>
         </header>
 
-        <!-- Login Section -->
+        <!-- login section -->
         <div id="login-section" class="section">
             <h2>Login</h2>
             <form id="login-form">
@@ -39,13 +39,13 @@
             </p>
         </div>
 
-        <!-- Products Section (Customer) -->
+        <!-- products section (customer) -->
         <div id="products-section" class="section hidden">
             <h2>Products</h2>
             <div id="products-grid" class="products-grid"></div>
         </div>
 
-        <!-- Shopping Cart Section -->
+        <!-- shopping cart section -->
         <div id="cart-section" class="section hidden">
             <h2>Shopping Cart</h2>
             <div id="cart-items"></div>
@@ -53,12 +53,12 @@
             <button id="checkout-button" onclick="showCheckout()" class="btn btn-primary">Proceed to Checkout</button>
         </div>
 
-        <!-- Checkout Section -->
+        <!-- checkout section -->
         <div id="checkout-section" class="section hidden">
             <h2>Checkout</h2>
             <form id="checkout-form">
                 <div id="checkout-summary" class="form-group" style="margin-bottom: 16px;">
-                    <!-- Populated with a quick summary of items and total -->
+                    <!-- populated with a quick summary of items and total -->
                 </div>
                 <div class="form-group">
                     <label for="payment-method">Payment Method:</label>
@@ -89,13 +89,13 @@
             </form>
         </div>
 
-        <!-- Orders Section -->
+        <!-- orders section -->
         <div id="orders-section" class="section hidden">
             <h2>Orders</h2>
             <div id="orders-list"></div>
         </div>
 
-        <!-- Admin Section -->
+        <!-- admin section -->
         <div id="admin-section" class="section hidden">
             <h2>Admin Panel</h2>
             <div class="admin-tabs">
@@ -105,7 +105,7 @@
             <div id="admin-content"></div>
         </div>
 
-        <!-- Navigation -->
+        <!-- navigation -->
         <nav id="nav-menu" class="nav-menu hidden">
             <button onclick="showProducts()" class="btn">Products</button>
             <button onclick="showCart()" class="btn">Cart <span id="cart-count">0</span></button>
@@ -116,10 +116,10 @@
             <button onclick="showAdminPanel()" class="btn">Admin Panel</button>
         </nav>
 
-        <!-- Message Display -->
+        <!-- message display -->
         <div id="message" class="message hidden"></div>
         
-        <!-- Receipt Modal -->
+        <!-- receipt modal -->
         <div id="receipt-modal" class="modal hidden">
             <div class="modal-content">
                 <span class="close" onclick="closeReceiptModal()">&times;</span>

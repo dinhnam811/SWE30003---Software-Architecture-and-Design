@@ -1,5 +1,5 @@
 """
-Database module - simple in-memory data storage (Singleton pattern)
+database module - simple in-memory data storage (Singleton pattern)
 """
 
 from typing import Dict, List, Optional
@@ -7,7 +7,7 @@ from product import Product
 from user import User, Customer, Admin
 
 class Database:
-    """Singleton class for data storage (in-memory for simplicity)"""
+    """singleton class for data storage (in-memory for simplicity)"""
     
     _instance = None
     
@@ -28,12 +28,12 @@ class Database:
         self.payments: Dict = {}
         self.invoices: Dict = {} 
         
-        # Initialize with sample data
+        # initialize with sample data
         self._init_sample_data()
     
     def _init_sample_data(self):
-        """Add sample data for testing"""
-        # Add sample products
+        """add sample data for testing"""
+        # add sample products
         products = [
             Product(1, "SNACK001", "Spicy ahh Chips", 2.99, "Crispy hot potato chips", 50, "/static/images/chips.jpg"),
             Product(2, "DRINK001", "Nitro Fuel", 1.99, "Refreshing Nitro Fuel", 100, "/static/images/fuel.jpg"),
@@ -45,74 +45,74 @@ class Database:
         for product in products:
             self.products[product.product_id] = product
         
-        # Add sample users
+        # add sample users
         self.users[1] = Customer(1, "customer@example.com", "password123", 
                                 "John Doe", "123 Main St")
         self.users[2] = Admin(2, "admin@example.com", "admin123")
     
-    # Product operations
+    # product operations
     def get_product(self, product_id: int) -> Optional[Product]:
-        """Get product by ID"""
+        """get product by ID"""
         return self.products.get(product_id)
     
     def get_all_products(self) -> List[Product]:
-        """Get all products"""
+        """get all products"""
         return list(self.products.values())
     
     def add_product(self, product: Product):
-        """Add new product"""
+        """add new product"""
         self.products[product.product_id] = product
     
     def update_product(self, product: Product):
-        """Update existing product"""
+        """update existing product"""
         if product.product_id in self.products:
             self.products[product.product_id] = product
     
-    # User operations
+    # user operations
     def get_user(self, user_id: int) -> Optional[User]:
-        """Get user by ID"""
+        """get user by ID"""
         return self.users.get(user_id)
     
     def get_user_by_email(self, email: str) -> Optional[User]:
-        """Get user by email"""
+        """get user by email"""
         for user in self.users.values():
             if user.email == email:
                 return user
         return None
     
     def add_user(self, user: User):
-        """Add new user"""
+        """add new user"""
         self.users[user.user_id] = user
     
-    # Order operations
+    # order operations
     def get_order(self, order_id: int):
-        """Get order by ID"""
+        """get order by ID"""
         return self.orders.get(order_id)
     
     def get_orders_by_customer(self, customer_id: int) -> List:
-        """Get all orders for a customer"""
+        """get all orders for a customer"""
         return [order for order in self.orders.values() 
                 if order.customer_id == customer_id]
     
     def get_all_orders(self) -> List:
-        """Get all orders"""
+        """get all orders"""
         return list(self.orders.values())
     
     def add_order(self, order):
-        """Add new order"""
+        """add new order"""
         self.orders[order.order_id] = order
     
-    # Payment operations
+    # payment operations
     def add_payment(self, payment):
-        """Add new payment"""
+        """add new payment"""
         self.payments[payment.payment_id] = payment
     
     def get_payment(self, payment_id: int):
-        """Get payment by ID"""
+        """get payment by ID"""
         return self.payments.get(payment_id)
     
     def get_payment_by_order(self, order_id: int):
-        """Get payment for a specific order"""
+        """get payment for a specific order"""
         for payment in self.payments.values():
             if payment.order_id == order_id:
                 return payment

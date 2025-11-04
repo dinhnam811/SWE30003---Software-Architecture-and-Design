@@ -1,11 +1,11 @@
-// API Base URL
+// API base URL
 const API_BASE = '';
 
-// Session storage
+// session storage
 let sessionId = localStorage.getItem('session_id');
 let currentUser = JSON.parse(localStorage.getItem('user') || 'null');
 
-// Initialize app
+// initialize app
 document.addEventListener('DOMContentLoaded', () => {
     if (sessionId && currentUser) {
         showMainApp();
@@ -13,12 +13,12 @@ document.addEventListener('DOMContentLoaded', () => {
         showLogin();
     }
     
-    // Set up login form
+    // set up login form
     document.getElementById('login-form').addEventListener('submit', handleLogin);
     document.getElementById('checkout-form').addEventListener('submit', handleCheckout);
 });
 
-// Show/Hide sections
+// show and hide sections
 function showLogin() {
     hideAll();
     document.getElementById('login-section').classList.remove('hidden');
@@ -46,14 +46,14 @@ function hideAll() {
     });
 }
 
-// Authentication
+// authentication
 async function handleLogin(e) {
     e.preventDefault();
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
     
     try {
-        // Send as form data (not JSON)
+        // send as form data no JSON
         const formData = new FormData();
         formData.append('email', email);
         formData.append('password', password);
@@ -93,7 +93,7 @@ async function logout() {
     location.reload();
 }
 
-// Products
+// products
 async function showProducts() {
     hideAll();
     document.getElementById('products-section').classList.remove('hidden');
@@ -137,7 +137,7 @@ async function loadProducts() {
     }
 }
 
-// Cart
+// cart
 async function showCart() {
     hideAll();
     document.getElementById('cart-section').classList.remove('hidden');
@@ -202,7 +202,7 @@ async function addToCart(productId) {
     const quantity = parseInt(document.getElementById(`qty-${productId}`).value);
     
     try {
-        // Send as form data
+        // send as form data
         const formData = new FormData();
         formData.append('product_id', productId);
         formData.append('quantity', quantity);
@@ -226,7 +226,7 @@ async function addToCart(productId) {
 
 async function updateCartItem(productId, quantity) {
     try {
-        // Send as form data
+        // send as form data
         const formData = new FormData();
         formData.append('product_id', productId);
         formData.append('quantity', parseInt(quantity));
@@ -267,11 +267,11 @@ function updateCartCount(count) {
     document.getElementById('cart-count').textContent = count;
 }
 
-// Checkout
+// checkout
 async function showCheckout() {
     hideAll();
     document.getElementById('checkout-section').classList.remove('hidden');
-    // Populate summary from current cart
+    // populate summary from current cart
     try {
         const response = await fetch(`${API_BASE}/api/cart?session_id=${sessionId}`);
         const data = await response.json();
@@ -294,7 +294,7 @@ async function showCheckout() {
             summaryDiv.innerHTML = '<em>Your cart is empty.</em>';
         }
     } catch (e) {
-        // Best-effort, ignore errors here
+        // best effort ignore errors here
     }
     setupPaymentValidation();
 }
@@ -302,7 +302,7 @@ async function showCheckout() {
 async function handleCheckout(e) {
     e.preventDefault();
     const paymentMethod = document.getElementById('payment-method').value;
-    // payment_details field might not exist; synthesize from card data to satisfy backend
+    // payment_details field might not exist. synthesize from card data to satisfy backend
     const paymentDetailsEl = document.getElementById('payment-details');
     const cardNumberInput = document.getElementById('card-number');
     const expiryInput = document.getElementById('expiry-date');
@@ -315,7 +315,7 @@ async function handleCheckout(e) {
     const cardNumValid = cardNumberInput ? (/^\d{16}$/.test(cardNumberInput.value)) : true;
     const expiryValid = expiryInput ? (/^(0[1-9]|1[0-2])\/\d{4}$/.test(expiryInput.value)) : true;
     const cvcValid = cvcInput ? (/^\d{3}$/.test(cvcInput.value)) : true;
-    // Show inline messages
+    // inline messages
     const cardErr = document.getElementById('card-number-error');
     const cvcErr = document.getElementById('cvc-error');
     if (cardErr) cardErr.style.display = cardNumValid ? 'none' : 'block';
@@ -330,7 +330,7 @@ async function handleCheckout(e) {
     }
     
     try {
-        // Send as form data
+        // send as form data
         const formData = new FormData();
         formData.append('payment_method', paymentMethod);
         formData.append('payment_details', paymentDetails);
@@ -343,7 +343,7 @@ async function handleCheckout(e) {
         if (response.ok) {
             const data = await response.json();
             
-            // Display receipt if available
+            // display receipt if available
             if (data.payment && data.payment.receipt) {
                 displayReceipt(data.payment.receipt, data.order);
             } else {
@@ -365,7 +365,7 @@ function displayReceipt(receipt, order) {
     const modal = document.getElementById('receipt-modal');
     
     if (!modal) {
-        // Fallback if modal doesn't exist
+        // fallback if modal not exists
         const receiptHtml = `
             <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.5); 
                         display: flex; align-items: center; justify-content: center; z-index: 2000;" 
@@ -418,7 +418,7 @@ function displayReceipt(receipt, order) {
         return;
     }
     
-    // Use modal if it exists
+    // use modal if exists
     receiptContent.innerHTML = `
         <div class="receipt">
             <h2> PAYMENT RECEIPT</h2>
@@ -475,67 +475,7 @@ function displayReceipt(receipt, order) {
     modal.classList.add('show');
 }
 
-function displayInvoice(invoice) {
-    const receiptContent = document.getElementById('receipt-content');
-    const modal = document.getElementById('receipt-modal');
-    
-    // Use modal to display invoice (reusing receipt modal)
-    receiptContent.innerHTML = `
-        <div class="receipt">
-            <h2> INVOICE</h2>
-            <div class="receipt-row">
-                <span>Invoice Number:</span>
-                <strong>${invoice.invoice_number}</strong>
-            </div>
-            <div class="receipt-row">
-                <span>Order ID:</span>
-                <strong>#${invoice.order_id}</strong>
-            </div>
-            <div class="receipt-row">
-                <span>Issue Date:</span>
-                <span>${invoice.issue_date}</span>
-            </div>
-            <div class="receipt-row">
-                <span>Due Date:</span>
-                <span>${invoice.due_date}</span>
-            </div>
-            <div class="receipt-row">
-                <span>Customer:</span>
-                <span>${invoice.customer_name}</span>
-            </div>
-            <div class="receipt-row" style="margin-top: 15px; padding-top: 15px; border-top: 2px solid #333;">
-                <strong>Items:</strong>
-            </div>
-            ${invoice.items.map(item => `
-                <div class="receipt-row" style="padding-left: 20px;">
-                    <span>${item.product_name} x${item.quantity} @ $${item.unit_price.toFixed(2)}</span>
-                    <span>$${item.line_total.toFixed(2)}</span>
-                </div>
-            `).join('')}
-            <div class="receipt-total">
-                <div class="receipt-row">
-                    <span>Total Amount:</span>
-                    <strong>$${invoice.total_amount.toFixed(2)}</strong>
-                </div>
-            </div>
-            <div class="receipt-row">
-                <span>Status:</span>
-                <strong style="color: ${invoice.status === 'Paid' ? '#28a745' : '#ff9800'};">${invoice.status}</strong>
-            </div>
-            <div class="receipt-footer">
-                Admin Invoice View
-            </div>
-        </div>
-        <div style="text-align: center; margin-top: 20px;">
-            <button onclick="closeReceiptModal();" class="btn btn-primary">Close</button>
-        </div>
-    `;
-    
-    modal.classList.remove('hidden');
-    modal.classList.add('show');
-}
-
-// Orders
+// orders
 async function showOrders() {
     hideAll();
     document.getElementById('orders-section').classList.remove('hidden');
@@ -626,14 +566,14 @@ function closeReceiptModal() {
     }
 }
 
-// Admin Panel
+// admin panel
 async function showAdminPanel() {
     hideAll();
     document.getElementById('admin-section').classList.remove('hidden');
     showAdminProducts();
 }
 
-// Payment input helpers
+// payment input helpers
 function setupPaymentValidation() {
     const cardInput = document.getElementById('card-number');
     const expiryInput = document.getElementById('expiry-date');
@@ -643,7 +583,7 @@ function setupPaymentValidation() {
 
     if (cardInput) {
         cardInput.addEventListener('input', () => {
-            // Keep digits only and limit to 16
+            // keep digits only and limit to 16
             cardInput.value = cardInput.value.replace(/\D/g, '').slice(0, 16);
             const ok = /^\d{16}$/.test(cardInput.value);
             if (cardErr) cardErr.style.display = cardInput.value.length === 0 || ok ? 'none' : 'block';
@@ -656,7 +596,7 @@ function setupPaymentValidation() {
 
     if (expiryInput) {
         expiryInput.addEventListener('input', () => {
-            // Allow only digits and slash, auto-insert slash after MM
+            // allow only digits and slash, auto slash after MM
             let v = expiryInput.value.replace(/[^\d]/g, '');
             if (v.length > 6) v = v.slice(0, 6);
             if (v.length >= 3) {
@@ -711,7 +651,7 @@ async function updateProduct(e, productId) {
     e.preventDefault();
     const form = e.target;
     
-    // Send as form data
+    // send as form data
     const formData = new FormData();
     formData.append('name', form.name.value);
     formData.append('price', parseFloat(form.price.value));
@@ -798,7 +738,7 @@ async function updateOrderStatus(orderId, status) {
     }
 }
 
-// Utility
+// utility
 function showMessage(text, type) {
     const messageDiv = document.getElementById('message');
     messageDiv.textContent = text;
