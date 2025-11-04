@@ -2,7 +2,7 @@
 OrderItem module - represents individual items in an order or cart
 """
 
-from Assignment3.convenience_store.product import Product
+from product import Product
 
 
 class OrderItem:
