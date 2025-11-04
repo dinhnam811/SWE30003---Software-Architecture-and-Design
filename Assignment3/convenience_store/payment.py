@@ -4,6 +4,7 @@ Payment module - handles payment processing with Strategy pattern
 
 from abc import ABC, abstractmethod
 from datetime import datetime
+from receipt import Receipt
 
 class PaymentMethod(ABC):
     """Abstract base class for payment methods (Strategy Pattern)"""
@@ -176,7 +177,7 @@ class Payment:
         self.status = "Success" if success else "Failed"
         return success
     
-    def generate_receipt(self, customer_name: str) -> Receipt:
+    def generate_receipt(self, customer_name: str, items: list = None) -> Receipt:
         """Generate receipt after successful payment"""
         if self.status == "Success":
             self.receipt = Receipt(
@@ -184,7 +185,8 @@ class Payment:
                 order_id=self.order_id,
                 customer_name=customer_name,
                 amount=self.amount,
-                payment_method=self.payment_method.get_method_name()
+                payment_method=self.payment_method.get_method_name(),
+                items=items if items else []
             )
             return self.receipt
         return None

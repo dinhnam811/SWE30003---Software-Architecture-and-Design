@@ -152,9 +152,14 @@ async function loadCart() {
         updateCartCount(data.item_count);
         
         const cartItems = document.getElementById('cart-items');
+        const checkoutBtn = document.getElementById('checkout-button');
         if (data.items.length === 0) {
             cartItems.innerHTML = '<p>Your cart is empty</p>';
             document.getElementById('cart-total').innerHTML = '';
+            if (checkoutBtn) {
+                checkoutBtn.title = 'Add items to proceed to checkout';
+                checkoutBtn.onclick = () => showMessage('Add items to proceed to checkout', 'error');
+            }
         } else {
             cartItems.innerHTML = data.items.map(item => `
                 <div class="cart-item">
@@ -168,6 +173,7 @@ async function loadCart() {
                         <h4>${item.product_name}</h4>
                         <p>Price: $${item.unit_price.toFixed(2)}</p>
                         <p>Subtotal: $${item.line_total.toFixed(2)}</p>
+                        ${item.stock_ok ? '' : `<p style="color: #c0392b; font-weight: bold; margin-top: 6px;">${item.stock_message}</p>`}
                     </div>
                     <div class="cart-item-actions">
                         <input type="number" value="${item.quantity}" min="1" 
@@ -178,6 +184,14 @@ async function loadCart() {
             `).join('');
             
             document.getElementById('cart-total').innerHTML = `Total: $${data.total.toFixed(2)}`;
+            // Disable checkout if any stock issues
+            if (checkoutBtn) {
+                const canCheckout = data.can_checkout !== undefined ? data.can_checkout : data.items.every(i => i.stock_ok !== false);
+                checkoutBtn.title = canCheckout ? '' : 'Resolve stock issues in your cart before checkout';
+                checkoutBtn.onclick = canCheckout 
+                    ? () => showCheckout()
+                    : () => showMessage('Some products are out of stock or exceeded stock limit', 'error');
+            }
         }
     } catch (error) {
         showMessage('Failed to load cart', 'error');
@@ -360,7 +374,7 @@ function displayReceipt(receipt, order) {
                             box-shadow: 0 10px 40px rgba(0,0,0,0.3);" 
                      onclick="event.stopPropagation();">
                     <div style="text-align: center; border-bottom: 2px dashed #ccc; padding-bottom: 20px; margin-bottom: 20px;">
-                        <h2 style="color: #28a745; margin: 0;">✅ Payment Successful!</h2>
+                        <h2 style="color: #28a745; margin: 0;"> Payment Successful!</h2>
                     </div>
                     
                     <div style="font-family: 'Courier New', monospace; background: #f9f9f9; padding: 20px; border-radius: 5px;">
@@ -428,6 +442,15 @@ function displayReceipt(receipt, order) {
                 <span>Payment Method:</span>
                 <span>${receipt.payment_method}</span>
             </div>
+            <div class="receipt-row" style="margin-top: 15px; padding-top: 15px; border-top: 2px solid #333;">
+                <strong>Items Purchased:</strong>
+            </div>
+            ${receipt.items && receipt.items.length > 0 ? receipt.items.map(item => `
+                <div class="receipt-row" style="padding-left: 20px;">
+                    <span>${item.product_name} x${item.quantity} @ $${item.unit_price.toFixed(2)}</span>
+                    <span>$${item.line_total.toFixed(2)}</span>
+                </div>
+            `).join('') : '<p style="padding-left: 20px;">No items</p>'}
             <div class="receipt-total">
                 <div class="receipt-row">
                     <span>Amount Paid:</span>
@@ -517,6 +540,21 @@ async function viewReceipt(orderId) {
         }
     } catch (error) {
         showMessage('Failed to load receipt', 'error');
+    }
+}
+
+async function viewInvoice(orderId) {
+    try {
+        const response = await fetch(`${API_BASE}/api/orders/${orderId}/invoice?session_id=${sessionId}`);
+        
+        if (response.ok) {
+            const invoice = await response.json();
+            displayInvoice(invoice);
+        } else {
+            showMessage('Invoice not available', 'error');
+        }
+    } catch (error) {
+        showMessage('Failed to load invoice', 'error');
     }
 }
 
@@ -675,6 +713,7 @@ async function showAdminOrders() {
                             </div>
                         `).join('')}
                     </div>
+                    <button onclick="viewInvoice(${order.order_id})" class="btn btn-primary">View Invoice</button>
                 </div>
             `).join('')}
         `;

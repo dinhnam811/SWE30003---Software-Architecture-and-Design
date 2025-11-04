@@ -26,6 +26,7 @@ class Database:
         self.users: Dict[int, User] = {}
         self.orders: Dict = {}
         self.payments: Dict = {}
+        self.invoices: Dict = {} 
         
         # initialize with sample data
         self._init_sample_data()
@@ -116,3 +117,16 @@ class Database:
             if payment.order_id == order_id:
                 return payment
         return None
+    
+    # Invoice operations
+    def add_invoice(self, invoice):
+        """Add new invoice"""
+        self.invoices[invoice.order_id] = invoice
+    
+    def get_invoice_by_order(self, order_id: int):
+        """Get invoice for a specific order"""
+        return self.invoices.get(order_id)
+    
+    def get_all_invoices(self) -> List:
+        """Get all invoices"""
+        return list(self.invoices.values())

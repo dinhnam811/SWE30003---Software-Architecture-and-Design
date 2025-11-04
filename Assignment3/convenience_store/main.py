@@ -15,7 +15,9 @@ from user import User, Customer, Admin
 from shopping_cart import ShoppingCart
 from order import Order
 from order_item import OrderItem
-from payment import Payment, DigitalWallet, BankDebit, PayPal, Invoice, Receipt
+from payment import Payment, DigitalWallet, BankDebit, PayPal
+from invoice import Invoice
+from receipt import Receipt
 from database import Database
 
 # create FastAPI app
@@ -125,7 +127,9 @@ async def get_cart(session_id: str):
     return {
         "items": cart.get_items(),
         "total": cart.get_total(),
-        "item_count": cart.get_item_count()
+        "item_count": cart.get_item_count(),
+        # can_checkout is true only if every item has stock_ok
+        "can_checkout": all((item.get("stock_ok", True) for item in cart.get_items()))
     }
 
 
@@ -308,6 +312,23 @@ async def get_order_receipt(session_id: str, order_id: int):
         raise HTTPException(status_code=404, detail="Receipt not generated")
     
     return payment.receipt.generate_receipt()
+
+
+@app.get("/api/orders/{order_id}/invoice")
+async def get_order_invoice(session_id: str, order_id: int):
+    """Get invoice for an order"""
+    user_id = sessions.get(session_id)
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+    
+    user = db.get_user(user_id)
+    
+    # Get invoice for this order
+    invoice = db.get_invoice_by_order(order_id)
+    if not invoice:
+        raise HTTPException(status_code=404, detail="Invoice not found")
+    
+    return invoice.generate_invoice()
 
 
 # ADMIN ENDPOINTS 
