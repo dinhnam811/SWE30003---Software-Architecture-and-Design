@@ -254,15 +254,60 @@ function updateCartCount(count) {
 }
 
 // Checkout
-function showCheckout() {
+async function showCheckout() {
     hideAll();
     document.getElementById('checkout-section').classList.remove('hidden');
+    // Populate summary from current cart
+    try {
+        const response = await fetch(`${API_BASE}/api/cart?session_id=${sessionId}`);
+        const data = await response.json();
+        const summaryDiv = document.getElementById('checkout-summary');
+        if (data.items && data.items.length > 0) {
+            const itemsHtml = data.items.map(i => `<div style="display:flex; justify-content: space-between;">
+                    <span>${i.product_name} x${i.quantity}</span>
+                    <span>$${i.line_total.toFixed(2)}</span>
+                </div>`).join('');
+            summaryDiv.innerHTML = `
+                <div style="border: 1px solid #eee; border-radius: 6px; padding: 12px; background: #fafafa;">
+                    <div style="font-weight: 600; margin-bottom: 8px;">Order Summary</div>
+                    ${itemsHtml}
+                    <div style="border-top: 1px solid #e5e5e5; margin-top: 8px; padding-top: 8px; display:flex; justify-content: space-between;">
+                        <span>Total</span>
+                        <strong>$${data.total.toFixed(2)}</strong>
+                    </div>
+                </div>`;
+        } else {
+            summaryDiv.innerHTML = '<em>Your cart is empty.</em>';
+        }
+    } catch (e) {
+        // Best-effort, ignore errors here
+    }
+    setupPaymentValidation();
 }
 
 async function handleCheckout(e) {
     e.preventDefault();
     const paymentMethod = document.getElementById('payment-method').value;
     const paymentDetails = document.getElementById('payment-details').value;
+    const cardNumberInput = document.getElementById('card-number');
+    const expiryInput = document.getElementById('expiry-date');
+    const cvcInput = document.getElementById('cvc');
+    const cardNumValid = cardNumberInput ? (/^\d{16}$/.test(cardNumberInput.value)) : true;
+    const expiryValid = expiryInput ? (/^(0[1-9]|1[0-2])\/\d{4}$/.test(expiryInput.value)) : true;
+    const cvcValid = cvcInput ? (/^\d{3}$/.test(cvcInput.value)) : true;
+    // Show inline messages
+    const cardErr = document.getElementById('card-number-error');
+    const cvcErr = document.getElementById('cvc-error');
+    if (cardErr) cardErr.style.display = cardNumValid ? 'none' : 'block';
+    if (cvcErr) cvcErr.style.display = cvcValid ? 'none' : 'block';
+    if (!cardNumValid || !expiryValid || !cvcValid) {
+        const reasons = [];
+        if (!cardNumValid) reasons.push('Invalid card number (16 digits)');
+        if (!expiryValid) reasons.push('Invalid expiry date (MM/YYYY)');
+        if (!cvcValid) reasons.push('Invalid CVC/CVV2 (3 digits)');
+        showMessage(`Some payment fields are invalid: ${reasons.join(', ')}`, 'error');
+        return; // block submission until fixed
+    }
     
     try {
         // Send as form data
@@ -482,6 +527,52 @@ async function showAdminPanel() {
     hideAll();
     document.getElementById('admin-section').classList.remove('hidden');
     showAdminProducts();
+}
+
+// Payment input helpers
+function setupPaymentValidation() {
+    const cardInput = document.getElementById('card-number');
+    const expiryInput = document.getElementById('expiry-date');
+    const cvcInput = document.getElementById('cvc');
+    const cardErr = document.getElementById('card-number-error');
+    const cvcErr = document.getElementById('cvc-error');
+
+    if (cardInput) {
+        cardInput.addEventListener('input', () => {
+            // Keep digits only and limit to 16
+            cardInput.value = cardInput.value.replace(/\D/g, '').slice(0, 16);
+            const ok = /^\d{16}$/.test(cardInput.value);
+            if (cardErr) cardErr.style.display = cardInput.value.length === 0 || ok ? 'none' : 'block';
+        });
+        cardInput.addEventListener('blur', () => {
+            const ok = /^\d{16}$/.test(cardInput.value);
+            if (cardErr) cardErr.style.display = ok ? 'none' : 'block';
+        });
+    }
+
+    if (expiryInput) {
+        expiryInput.addEventListener('input', () => {
+            // Allow only digits and slash, auto-insert slash after MM
+            let v = expiryInput.value.replace(/[^\d]/g, '');
+            if (v.length > 6) v = v.slice(0, 6);
+            if (v.length >= 3) {
+                v = v.slice(0, 2) + '/' + v.slice(2);
+            }
+            expiryInput.value = v;
+        });
+    }
+
+    if (cvcInput) {
+        cvcInput.addEventListener('input', () => {
+            cvcInput.value = cvcInput.value.replace(/\D/g, '').slice(0, 3);
+            const ok = /^\d{3}$/.test(cvcInput.value);
+            if (cvcErr) cvcErr.style.display = cvcInput.value.length === 0 || ok ? 'none' : 'block';
+        });
+        cvcInput.addEventListener('blur', () => {
+            const ok = /^\d{3}$/.test(cvcInput.value);
+            if (cvcErr) cvcErr.style.display = ok ? 'none' : 'block';
+        });
+    }
 }
 
 async function showAdminProducts() {
