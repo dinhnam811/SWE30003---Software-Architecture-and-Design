@@ -110,6 +110,43 @@ async def get_product(product_id: int):
     return product.get_details()
 
 
+@app.post("/api/admin/products")
+async def create_product(
+    session_id: str = Form(...),
+    sku: str = Form(...),
+    name: str = Form(...),
+    price: float = Form(...),
+    stock: int = Form(...),
+    description: str = Form("")
+):
+    """Admin: Create new product"""
+    user_id = sessions.get(session_id)
+    if not user_id:
+        raise HTTPException(status_code=401, detail="Not authenticated")
+
+    user = db.get_user(user_id)
+    if user.role != "admin":
+        raise HTTPException(status_code=403, detail="Admin access required")
+
+    # Generate new product ID
+    existing_ids = [p.product_id for p in db.get_all_products()]
+    new_id = max(existing_ids) + 1 if existing_ids else 1
+
+    # Create new product
+    new_product = Product(
+        product_id=new_id,
+        sku=sku,
+        name=name,
+        price=price,
+        description=description,
+        stock=stock,
+        image_url=""  # Image handling can be added later if needed
+    )
+
+    db.add_product(new_product)
+    return {"message": "Product created successfully", "product": new_product.get_details()}
+
+
 # CART ENDPOINTS 
 
 @app.get("/api/cart")
