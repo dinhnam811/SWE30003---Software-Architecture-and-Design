@@ -683,13 +683,33 @@ async function showAdminProducts() {
     try {
         const response = await fetch(`${API_BASE}/api/products`);
         const products = await response.json();
-        
+
         const content = document.getElementById('admin-content');
         content.innerHTML = `
-            <h3>Manage Products</h3>
+            <h3>Add New Product</h3>
+            <div class="admin-product-form" style="background-color: #e8f5e9; border: 2px solid #4caf50;">
+                <form id="create-product-form" onsubmit="createProduct(event)">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                        <input type="text" name="sku" placeholder="SKU (e.g., SNACK003)" required>
+                        <input type="text" name="name" placeholder="Product Name" required>
+                        <input type="number" name="price" step="0.01" placeholder="Price" required>
+                        <input type="number" name="stock" placeholder="Stock" required>
+                    </div>
+                    <textarea name="description" placeholder="Description" style="width: 100%; margin-top: 10px; padding: 10px;" rows="3"></textarea>
+                    <div style="margin-top: 10px;">
+                        <label for="product-image" style="display: block; margin-bottom: 5px; font-weight: bold;">Product Image:</label>
+                        <input type="file" id="product-image" name="image" accept="image/*" style="padding: 5px;">
+                        <small style="display: block; margin-top: 5px; color: #666;">Optional: Upload a product image (JPG, PNG, etc.)</small>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="margin-top: 10px;">Create Product</button>
+                </form>
+            </div>
+
+            <h3 style="margin-top: 30px;">Manage Existing Products</h3>
             ${products.map(product => `
                 <div class="admin-product-form">
                     <h4>${product.name} (ID: ${product.product_id})</h4>
+                    ${product.image_url ? `<img src="${product.image_url}" alt="${product.name}" style="max-width: 150px; max-height: 150px; object-fit: cover; margin-bottom: 10px; border-radius: 8px;">` : '<p style="color: #999; font-style: italic;">No image</p>'}
                     <form onsubmit="updateProduct(event, ${product.product_id})">
                         <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
                             <input type="text" value="${product.name}" name="name" placeholder="Name">
@@ -698,6 +718,11 @@ async function showAdminProducts() {
                             <button type="submit" class="btn btn-primary">Update</button>
                         </div>
                         <textarea name="description" placeholder="Description" style="width: 100%; margin-top: 10px; padding: 10px;">${product.description}</textarea>
+                        <div style="margin-top: 10px;">
+                            <label style="display: block; margin-bottom: 5px; font-weight: bold;">Update Product Image:</label>
+                            <input type="file" name="image" accept="image/*" style="padding: 5px;">
+                            <small style="display: block; margin-top: 5px; color: #666;">Optional: Upload new image to replace current one</small>
+                        </div>
                     </form>
                 </div>
             `).join('')}
@@ -710,27 +735,73 @@ async function showAdminProducts() {
 async function updateProduct(e, productId) {
     e.preventDefault();
     const form = e.target;
-    
+
     // Send as form data
     const formData = new FormData();
     formData.append('name', form.name.value);
     formData.append('price', parseFloat(form.price.value));
     formData.append('stock', parseInt(form.stock.value));
     formData.append('description', form.description.value);
-    
+
+    // Add image file if selected
+    const imageInput = form.image;
+    if (imageInput && imageInput.files && imageInput.files[0]) {
+        formData.append('image', imageInput.files[0]);
+    }
+
     try {
         const response = await fetch(`${API_BASE}/api/admin/products/${productId}?session_id=${sessionId}`, {
             method: 'PUT',
             body: formData
         });
-        
+
         if (response.ok) {
             showMessage('Product updated!', 'success');
+            // Reload the admin products view to show the updated image
+            showAdminProducts();
         } else {
             showMessage('Failed to update product', 'error');
         }
     } catch (error) {
         showMessage('Failed to update product', 'error');
+    }
+}
+
+async function createProduct(e) {
+    e.preventDefault();
+    const form = e.target;
+
+    // Create FormData with all form fields
+    const formData = new FormData();
+    formData.append('session_id', sessionId);
+    formData.append('sku', form.sku.value);
+    formData.append('name', form.name.value);
+    formData.append('price', parseFloat(form.price.value));
+    formData.append('stock', parseInt(form.stock.value));
+    formData.append('description', form.description.value);
+
+    // Add image file if selected
+    const imageInput = form.image;
+    if (imageInput.files && imageInput.files[0]) {
+        formData.append('image', imageInput.files[0]);
+    }
+
+    try {
+        const response = await fetch(`${API_BASE}/api/admin/products`, {
+            method: 'POST',
+            body: formData
+        });
+
+        if (response.ok) {
+            showMessage('Product created successfully!', 'success');
+            // Reload the admin products view to show the new product
+            showAdminProducts();
+        } else {
+            const error = await response.json();
+            showMessage('Failed to create product: ' + (error.detail || 'Unknown error'), 'error');
+        }
+    } catch (error) {
+        showMessage('Failed to create product: ' + error.message, 'error');
     }
 }
 
