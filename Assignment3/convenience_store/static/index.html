@@ -11,7 +11,10 @@
     <div class="container">
         <!-- Header -->
         <header>
-            <h1>🏪 Convenience Store</h1>
+            <div class="header-content">
+                <h1>✨ The Corner Shop</h1>
+                <p class="tagline">Your everyday essentials, delivered with care</p>
+            </div>
             <div id="user-info" class="hidden">
                 <span id="user-email"></span>
                 <button onclick="logout()" class="btn btn-secondary">Logout</button>
@@ -19,101 +22,135 @@
         </header>
 
         <!-- Login Section -->
-        <div id="login-section" class="section">
-            <h2>Login</h2>
-            <form id="login-form">
-                <div class="form-group">
-                    <label for="email">Email:</label>
-                    <input type="email" id="email" required>
+        <div id="login-section" class="section login-container">
+            <div class="login-card">
+                <h2>Welcome Back</h2>
+                <p class="subtitle">Sign in to continue shopping</p>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" placeholder="you@example.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" placeholder="••••••••" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-full">Sign In</button>
+                </form>
+                <div class="hint">
+                    <strong>Demo Accounts:</strong><br>
+                    Customer: <code>customer@example.com</code> / <code>password123</code><br>
+                    Admin: <code>admin@example.com</code> / <code>admin123</code>
                 </div>
-                <div class="form-group">
-                    <label for="password">Password:</label>
-                    <input type="password" id="password" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Login</button>
-            </form>
-            <p class="hint">
-                Demo credentials:<br>
-                Customer: customer@example.com / password123<br>
-                Admin: admin@example.com / admin123
-            </p>
+            </div>
         </div>
 
         <!-- Products Section (Customer) -->
         <div id="products-section" class="section hidden">
-            <h2>Products</h2>
+            <div class="section-header">
+                <h2>Our Products</h2>
+                <p class="section-subtitle">Carefully curated items for your daily needs</p>
+            </div>
             <div id="products-grid" class="products-grid"></div>
         </div>
 
         <!-- Shopping Cart Section -->
         <div id="cart-section" class="section hidden">
-            <h2>Shopping Cart</h2>
+            <div class="section-header">
+                <h2>Shopping Cart</h2>
+                <p class="section-subtitle">Review your items before checkout</p>
+            </div>
             <div id="cart-items"></div>
             <div id="cart-total" class="cart-total"></div>
-            <button id="checkout-button" onclick="showCheckout()" class="btn btn-primary">Proceed to Checkout</button>
+            <button id="checkout-button" onclick="showCheckout()" class="btn btn-primary btn-large">Proceed to Checkout</button>
         </div>
 
         <!-- Checkout Section -->
         <div id="checkout-section" class="section hidden">
-            <h2>Checkout</h2>
-            <form id="checkout-form">
-                <div id="checkout-summary" class="form-group" style="margin-bottom: 16px;">
-                    <!-- Populated with a quick summary of items and total -->
-                </div>
+            <div class="section-header">
+                <h2>Checkout</h2>
+                <p class="section-subtitle">Complete your purchase securely</p>
+            </div>
+            <form id="checkout-form" class="checkout-form">
+                <div id="checkout-summary" class="checkout-summary"></div>
+                
                 <div class="form-group">
-                    <label for="payment-method">Payment Method:</label>
+                    <label for="payment-method">Payment Method</label>
                     <select id="payment-method" required>
                         <option value="wallet">Digital Wallet</option>
                         <option value="bank">Bank Debit</option>
                         <option value="paypal">PayPal</option>
                     </select>
                 </div>
+                
                 <div class="form-group">
                     <label for="card-number">Card Number</label>
-                    <input type="text" id="card-number" inputmode="numeric" placeholder="16-digit card number" maxlength="16" required>
-                    <small id="card-number-error" style="color: #c0392b; display: none;">Please enter a valid card number (16 digits)</small>
+                    <input type="text" id="card-number" inputmode="numeric" placeholder="1234 5678 9012 3456" maxlength="16" required>
+                    <small id="card-number-error" class="error-text">Please enter a valid card number (16 digits)</small>
                 </div>
-                <div class="form-group" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
-                    <div>
+                
+                <div class="form-row">
+                    <div class="form-group">
                         <label for="expiry-date">Expiry Date</label>
                         <input type="text" id="expiry-date" placeholder="MM/YYYY" maxlength="7" required>
                     </div>
-                    <div>
-                        <label for="cvc">CVC/CVV2</label>
-                        <input type="text" id="cvc" inputmode="numeric" placeholder="3 digits" maxlength="3" required>
-                        <small id="cvc-error" style="color: #c0392b; display: none;">Please enter 3 digits</small>
+                    <div class="form-group">
+                        <label for="cvc">CVC/CVV</label>
+                        <input type="text" id="cvc" inputmode="numeric" placeholder="123" maxlength="3" required>
+                        <small id="cvc-error" class="error-text">Please enter 3 digits</small>
                     </div>
                 </div>
-                <button type="submit" class="btn btn-primary">Place Order</button>
-                <button type="button" onclick="showCart()" class="btn btn-secondary">Back to Cart</button>
+                
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary btn-large">Place Order</button>
+                    <button type="button" onclick="showCart()" class="btn btn-secondary">Back to Cart</button>
+                </div>
             </form>
         </div>
 
         <!-- Orders Section -->
         <div id="orders-section" class="section hidden">
-            <h2>Orders</h2>
+            <div class="section-header">
+                <h2>Your Orders</h2>
+                <p class="section-subtitle">Track and manage your purchases</p>
+            </div>
             <div id="orders-list"></div>
         </div>
 
         <!-- Admin Section -->
         <div id="admin-section" class="section hidden">
-            <h2>Admin Panel</h2>
+            <div class="section-header">
+                <h2>Admin Panel</h2>
+                <p class="section-subtitle">Manage products and orders</p>
+            </div>
             <div class="admin-tabs">
-                <button onclick="showAdminProducts()" class="btn">Manage Products</button>
-                <button onclick="showAdminOrders()" class="btn">View All Orders</button>
+                <button onclick="showAdminProducts()" class="btn btn-tab">Manage Products</button>
+                <button onclick="showAdminOrders()" class="btn btn-tab">View All Orders</button>
             </div>
             <div id="admin-content"></div>
         </div>
 
         <!-- Navigation -->
         <nav id="nav-menu" class="nav-menu hidden">
-            <button onclick="showProducts()" class="btn">Products</button>
-            <button onclick="showCart()" class="btn">Cart <span id="cart-count">0</span></button>
-            <button onclick="showOrders()" class="btn">My Orders</button>
+            <button onclick="showProducts()" class="btn btn-nav">
+                <span class="icon">🛍️</span>
+                <span>Products</span>
+            </button>
+            <button onclick="showCart()" class="btn btn-nav">
+                <span class="icon">🛒</span>
+                <span>Cart <span id="cart-count" class="badge">0</span></span>
+            </button>
+            <button onclick="showOrders()" class="btn btn-nav">
+                <span class="icon">📦</span>
+                <span>Orders</span>
+            </button>
         </nav>
 
         <nav id="admin-nav" class="nav-menu hidden">
-            <button onclick="showAdminPanel()" class="btn">Admin Panel</button>
+            <button onclick="showAdminPanel()" class="btn btn-nav">
+                <span class="icon">⚙️</span>
+                <span>Admin Panel</span>
+            </button>
         </nav>
 
         <!-- Message Display -->
